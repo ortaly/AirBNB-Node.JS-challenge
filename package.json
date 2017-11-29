@@ -1,0 +1,24 @@
+{
+  "name": "airbnb-node.js-challenge",
+  "version": "1.0.0",
+  "description": "AIRBNB AREAS WITH THE HIGHEST DEMAND IN YOUR FAVORITE CITY",
+  "main": "main.js",
+  "dependencies": {
+    "https-proxy-agent": "^2.1.0",
+    "node-fetch": "^1.7.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ortaly/AirBNB-Node.JS-challenge.git"
+  },
+  "author": "Ortal Yedgar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ortaly/AirBNB-Node.JS-challenge/issues"
+  },
+  "homepage": "https://github.com/ortaly/AirBNB-Node.JS-challenge#readme"
+}
