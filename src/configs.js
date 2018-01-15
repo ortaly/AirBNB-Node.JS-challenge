@@ -1,5 +1,5 @@
 const LOCATION = 'Amsterdam';
-const CLIENT_ID = ''; //TODO: add
+const CLIENT_ID = '';//TODO: add client id
 
 
 module.exports = {

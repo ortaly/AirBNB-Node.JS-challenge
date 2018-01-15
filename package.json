@@ -5,7 +5,8 @@
   "main": "main.js",
   "dependencies": {
     "https-proxy-agent": "^2.1.0",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "queue": "4.2.2"
   },
   "devDependencies": {},
   "scripts": {

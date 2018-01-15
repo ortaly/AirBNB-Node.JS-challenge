@@ -8,17 +8,21 @@ let params;
 
 exports.checkAvailability = function(listingId, resolve) {
     let agent = {};
-    if(process.env.USERDNSDOMAIN === "CORP.AMDOCS.COM"){
-        agent = {agent: new HttpsProxyAgent('http://genproxy:8080')};
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+    function getStringDate(date){
+        return date.getFullYear() + "-" + (date.getMonth + 1) + "-" + date.getDate();
     }
+
+    let startDate = new Date(+new Date + 12096e5); //12096e5 = 14 days in milliseconds
+    startDate = getStringDate(startDate);
+    let endDate = new Date(+new Date - 12096e5);
+    endDate = getStringDate(endDate);
     
     const searchCalenderParams = new URLSearchParams([
         ['client_id', configs.CLIENT_ID],
         ['listing_id', listingId],
-        // TODO: calc dates
-        ['start_date', '2017-11-13'],
-        ['end_date', '2017-12-13']
+        ['start_date', startDate],
+        ['end_date', endDate]
     ]);
     const availabilityObj = {};
 
@@ -33,3 +37,5 @@ exports.checkAvailability = function(listingId, resolve) {
 
         
 } 
+
+

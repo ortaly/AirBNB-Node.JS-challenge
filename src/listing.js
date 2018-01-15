@@ -9,35 +9,51 @@ const queue = require('queue');
 let params;
 
 exports.search = function() {
-    const searchListingParams = new URLSearchParams([
-        ['client_id', configs.CLIENT_ID],
-        ['location', configs.LOCATION],
-        ['page', 2],
-        // ['price_min', 3500],
-    ]);
 
     let agent = {};
-    if(process.env.USERDNSDOMAIN === "CORP.AMDOCS.COM"){
-        agent = {agent: new HttpsProxyAgent('http://genproxy:8080')};
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+    function getSearchResults(page, searchResults){
+        let url = `https://api.airbnb.com/search/search_results?client_id=${configs.CLIENT_ID}&location=${configs.LOCATION}&page=${page}`;
+        console.log("url: " + url); 
+        fetch(url, {})
+            .then(function (res) {
+                return res.json();
+            }).then(body => {
+                if (!body.results_json.metadata.pagination.result_count){
+                    fs.writeFile('./result.txt', JSON.stringify(searchResults), function (err) {
+                        if (err) {
+                            return console.log("err=" + err);
+                        }
+                    });
+                    processFile(searchResults);
+                }
+                else {
+                    searchResults = searchResults.concat(body.results_json.search_results);
+                    page += 1; 
+                    setTimeout(function(){
+                        console.log("get page: " + page); 
+                        console.log("searchResults length: " + searchResults.length);                    
+                        getSearchResults(page, searchResults);
+                    }, 10000);
+                }
+                // fs.writeFile('./result.txt', JSON.stringify(body), function (err) {
+                //     if (err) {
+                //         return console.log("err=" + err);
+                //     }
+                // })
+            } , function(err){
+                console.log("ERR! : " , err);
+                fs.writeFile('./result.txt', JSON.stringify(searchResults), function (err) {
+                    if (err) {
+                        return console.log("err=" + err);
+                    }
+                });
+                processFile(searchResults);
+            });
+
     }
 
-    
-
-    fetch(`https://api.airbnb.com/search/search_results?${searchListingParams.toString()}`, agent)
-        .then(function (res) {
-            return res.json();
-        }).then(body => 
-            processFile(body)
-            // fs.writeFile('./result.txt', JSON.stringify(body), function (err) {
-            //     if (err) {
-            //         return console.log("err=" + err);
-            //     }
-            // })
-        // console.log(res);
-        , function(err){
-            console.log("ERR! : " , err);
-        });
+    getSearchResults(1, []);
 
     // fs.readFile('./result.txt', function read(err, data){
     //     if (err) {
@@ -47,8 +63,8 @@ exports.search = function() {
     //     processFile(); 
     // });
 
-    function processFile(content) {
-        const searchResults = content.results_json.search_results;
+
+    function processFile(searchResults) {
         let resultsQueue = queue(); 
         resultsQueue.concurrency = 1;
         const availbilityResults = [];
@@ -66,6 +82,7 @@ exports.search = function() {
                     }, 5000);
                 });
             }).then(function(data){
+                console.log('data: ' + JSON.stringify(data));
                 availbilityResults.push(data);
             });
             
@@ -74,7 +91,7 @@ exports.search = function() {
         resultsQueue.start(function (err) {
             if (err) throw err
             console.log('all done!' + availbilityResults.length);
-            fs.writeFile('./result.txt', JSON.stringify(availbilityResults), function (err) {
+            fs.writeFile('./result2.txt', JSON.stringify(availbilityResults), function (err) {
                             if (err) {
                                 return console.log("err=" + err);
                             }
