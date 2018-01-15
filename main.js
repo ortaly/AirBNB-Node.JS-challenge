@@ -6,4 +6,7 @@ const listing = require('./src/listing');
 
 
 listing.search();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 50fab1a1a00fd3a42a04e910cf90361b21c1fdef
